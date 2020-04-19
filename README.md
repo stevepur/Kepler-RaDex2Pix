@@ -10,9 +10,11 @@ The Python notebooks raDec2Pix_example.ipynb and test_ra_dec_2_pix.ipynb provide
 This class contains the following functions:
 
 Initializer:
+
 .raDec2PixClass(dataDir): dataDir is the relative path to the raDec2PixDir directory, containing the data files required by raDec2Pix.
 
 Function that maps RA and DEC to pixel position at a given time:
+
 m, o, r, c = .ra_dec_2_pix(ra, dec, mjds, raPointing = None, decPointing = None, rollPointing = None, deltaRa = None, deltaDec = None, deltaRoll = None, aberrateFlag = True).  
 
 Inputs: 
