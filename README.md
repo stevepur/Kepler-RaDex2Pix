@@ -39,6 +39,14 @@ If ra and dec are arrays and mjds is a single value, then m, o, r and c are arra
 
 if ra, dec and mjds are arrays, then every element of mjds is applied to each ra,dec pair, and m, o, r and c are matrices.  The diagonal of the returned matrices are the ra and dec at their corresponding mjds.
 
+Example:
+<pre><code>
+import raDec2Pix
+rdp = raDec2Pix.raDec2PixClass("raDec2PixDir")
+m, o, r, c = rdp.ra_dec_2_pix(299.89509, 40.6334, 55183.0)
+print("module " + str(m) + ", output " + str(o) + ", row " + str(r) + ", column " + str(c))
 
+module 22, output 3, row 162.8879188939173, column 99.7341745175919
+</code></pre>
 
 
