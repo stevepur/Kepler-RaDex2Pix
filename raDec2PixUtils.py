@@ -28,3 +28,11 @@ def append_col(a1, col):
 def sub2ind(array_shape, rows, cols):
     return rows*array_shape[1] + cols
 
+def unitv(v):
+    if v.size > 1:
+        if v.ndim > 1:
+            return v/make_col(np.linalg.norm(v, axis=1)); # make rows unit vectors
+        else:
+            return v/make_col(np.linalg.norm(v)); # make rows unit vectors
+    else:
+        return 1

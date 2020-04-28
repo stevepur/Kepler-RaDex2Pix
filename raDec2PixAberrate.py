@@ -136,9 +136,114 @@ class aberrateRaDec:
         return xnew, ynew, znew
         
     def aberrate_ra_dec(self, ra, dec, julianTime):
+        # function [aberRa, aberDec] = aberrate_ra_dec(ra, dec, julianTime, [vel])
+        #   Apply an aberration to the RA and Dec based on the spacecraft state
+        #   vector at time julianTime.  If there's only one julianTime, it is used for
+        #   all RAs and Decs, otherwise, ra, dec, and julianTime should all have the
+        #   same number of elements, and the aberration will be applied one-to-one.
         vel = self.get_velocity_vector_mps(julianTime);
         
         x, y, z = self.convert_stars_sph2cart(ra, dec);
 
         xab, yab, zab = self.vel_aber( x, y, z, vel );
         return self.convert_stars_cart2sph(xab, yab, zab);
+
+    def vel_aber_inv(self, x, y, z, velocity):
+        #
+        #function [xnew, ynew, znew] = vel_aber_inv(x, y, z, velocity, bRelativistic)
+        #
+        # Inputs:
+        #     x,y,z: Three vectors representing the actual direction to the star.  Need
+        #         not be normalized.
+        #
+        #     velocity:  a column of one or more three-vectors representing the
+        #         velocity of the observer, in meters per second.  Must have
+        #         the same dimensions as pt.
+        #
+        #     bRelativistic: A boolean flag to determine if the calculation is done
+        #         using the Newtonian or the relativistic form.  Defaults to 1.  The
+        #         Newtonian form may be faster.
+        #
+        # Output:
+        #     Three vectors with the same dimension as the inputs. The 3 vectors
+        #         are components of the unit vectors representing the true direction of
+        #         the star.
+        #
+        apparent_pt = np.array([x[0], y[0], z[0]]);
+
+        lightspeed    = 2.99792458e8;
+        vel           = velocity / lightspeed;
+        if vel.ndim == 1:
+            beta = np.linalg.norm(vel);
+        else:
+            beta = np.linalg.norm(vel, axis=1);
+
+        # angle between velocity vector and apparent direction -- NB that this calculation is of
+        # limited and possibly unacceptable accuracy for alpha prime within ~1 degree of zero.
+        alpha_prime = np.arccos(np.sum(apparent_pt*ru.unitv(velocity)));
+
+        # initialize solution: set actual angle to apparent angle:
+        alpha = alpha_prime;
+
+        alpha_old = alpha+1; # initialize to get into loop
+
+        iterCount = 0;
+        maxIter = 1000;
+        while np.any(np.abs(alpha-alpha_old)>1e-12):
+            alpha_old = alpha;
+            dalpha = (np.tan(alpha_prime)*np.cos(alpha)+beta*np.tan(alpha_prime)-np.sqrt(1-beta**2)*np.sin(alpha)) \
+                /(np.tan(alpha_prime)*np.sin(alpha)+np.sqrt(1-beta**2)*np.cos(alpha));
+            alpha=alpha+dalpha;
+            iterCount = iterCount + 1;
+            if iterCount > maxIter:
+                raise ValueError("alpha did not converge");
+
+
+        # find normal to velocity vector
+        unit_vel=ru.unitv(vel);
+        normal = np.cross(unit_vel,apparent_pt); # out of paper vector
+        normal = ru.unitv(np.cross(normal,unit_vel));
+
+        pt = np.tile(np.cos(alpha),(1,3))*unit_vel+np.tile(np.sin(alpha),(1,3))*normal;
+        pt = ru.unitv( pt );
+
+        xnew = pt[0,0];
+        ynew = pt[0,1];
+        znew = pt[0,2];
+        return xnew, ynew, znew
+
+    def unaberrate_ra_dec(self, ra, dec, julianTime):
+        # function [aberRa, aberDec] = unaberrate_ra_dec(ra, dec, julianTime)
+        #   Remove an aberration to the RA and Dec based on the spacecraft state
+        #   vector at time julianTime.  If there's only one julianTime, it is used for
+        #   all RAs and Decs, otherwise, ra, dec, and julianTime should all have the
+        #   same number of elements, and the aberration will be applied one-to-one.
+
+        raApparent = ra
+        decApparent = dec
+        
+        nRaDec = raApparent.size;
+        
+        velocity = self.get_velocity_vector_mps(julianTime);
+        if velocity.shape[0] == 1:
+            velocity = np.tile(velocity, raApparent.shape);
+        
+        # convert the ra and dec into a Cartesian vector which points at the point of interest in
+        # an equatorial coordinate system
+        x, y, z = self.convert_stars_sph2cart(raApparent, decApparent);
+        
+        # construct vectors of unabberated Cartesian coordinates which will be filled in by the
+        # calculation engine
+
+        xActual = np.zeros(x.shape) ;
+        yActual = np.zeros(x.shape) ;
+        zActual = np.zeros(x.shape) ;
+          
+        # perform the calculation:  since vel_aber_inv is not vectorized, the calculation must be
+        # made for one point and one velocity at a time, via the dreaded for-loop
+        for iRaDec in range(nRaDec):
+            xActual[iRaDec], yActual[iRaDec], zActual[iRaDec] = self.vel_aber_inv( x[iRaDec], y[iRaDec], z[iRaDec], velocity[iRaDec,:] ) ;
+          
+        # convert back to RA and Dec from Cartesian coordinates
+        return self.convert_stars_cart2sph(xActual, yActual, zActual);
+
