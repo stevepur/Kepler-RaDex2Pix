@@ -579,7 +579,7 @@ class raDec2PixClass:
     # column, given the plate scale and pincushion parameters
     
     def compute_lat_long_iteratively(self, rowCentered, colCentered, plateScaleN, pincushionN, convergenceTolerance ):
-    
+   
     # define a vector which shows the convergence status of each member of the data vectors,
     # and initialize to false
         convergenceStatus = np.zeros(rowCentered.shape, dtype=bool); 
@@ -608,7 +608,7 @@ class raDec2PixClass:
             latmNew[needToIterate] = colCentered[needToIterate] * plateScaleN[needToIterate] / ( 1 + pincushionN[needToIterate] * radius2[needToIterate] ) ;
             deltaLngr = np.abs(lngrNew - lngr) ;
             deltaLatm = np.abs(latmNew - latm) ;
-          
+         
     #     Convergence occurs when either the absolute change is < the convergenceTolerance or
     #     else the relative change is < the convergence tolerance.  We expect the former
     #     condition to hold when the value of lngr / latm is close to zero, otherwise the
@@ -628,13 +628,12 @@ class raDec2PixClass:
           
     #     replace the old estimated result vectors with the new ones
     
-            lngr = lngrNew ;
-            latm = latmNew ;
+            lngr[:] = lngrNew[:] ;
+            latm[:] = latmNew[:] ;
           
     
         if iconverge > converganceAttemptsLimit:
             print("raDec2Pix:Pix2RaDec: compute_lat_long_iteratively did not converge.");
-      
         return lngr, latm
         
     def doTransform_pix(self, module, output, row, column, quarter, julianTime, raPointing, decPointing, rollPointing):
@@ -653,7 +652,6 @@ class raDec2PixClass:
         
         rtd = 180/np.pi;
 
-        #[ra0 dec0 drot1] = get_nominal_fov_center();
 
 #        new_mod = [-1, 0:2, -1, 3:17, -1, 18:20, -1];
         new_mod = np.r_[-1, 0:3, -1, 3:18, -1, 18:21, -1];
@@ -675,7 +673,6 @@ class raDec2PixClass:
         chip_n = np.floor( (output+1)/2 +0.1).astype(int) - 1;  # chip number index  NO -1 FOR MATLAB
         
         plate_scale = self.geomModel.get("plateScale");
-        #     plate_scale = plate_scale(end);
         plateScaleCcd = plate_scale[0:plate_scale.size:2];
         plateScaleN = plateScaleCcd[chip_n];
         plateScaleN = np.reshape(plateScaleN, chip_n.shape);
@@ -689,9 +686,6 @@ class raDec2PixClass:
         pincushionN = np.reshape(pincushionN, chip_n.shape) ;
    
     
-    # #     lngr = plate_scale(end)*(raDec2PixObject.nRowsImaging + chip_offset(chip_n,2) - row);
-    #     lngr = plateScaleN * (raDec2PixObject.nRowsImaging + chip_offset(chip_n,2) - row);
-    #     latp =  raDec2PixObject.nColsImaging - column;
     
     #   convert the row and column coordinates to coordinates centered on the notional center
     #   of the module, with unit vectors pointing towards the readout row/column of the
@@ -701,7 +695,6 @@ class raDec2PixClass:
         colCentered = rm.get_parameters("nColsImaging") - column ;
 
         evenQuadIndex = np.where((quad==0)|(quad==2));
-    #    latp(evenQuadIndex) = -1 * latp(evenQuadIndex);
         colCentered[evenQuadIndex] = -1 * colCentered[evenQuadIndex] ;
         colCentered = colCentered + chip_offset[chip_n,2] ;
         
@@ -715,8 +708,6 @@ class raDec2PixClass:
         lngr = ru.make_col(np.array(lngr))
         latm = ru.make_col(np.array(latm))
     
-    #     latm = (latp + chip_offset(chip_n,3))*plate_scale; # in arc sec 
-    #    latm = (latp + chip_offset(chip_n,3)) * plateScaleN;
         latm = latm/3600./rtd;  # latm in radians
         lngm = lngr/np.cos(latm);
         # correct for cos effect going from spherical to rectangular coor
