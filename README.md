@@ -5,7 +5,7 @@ raDec2Pix (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6349250/) was a Matlab c
 
 This python port duplicates the Matlab code's behavior, and supports both the original Kepler mission and K2.  
 
-The Python notebooks raDec2Pix_example.ipynb, test_ra_dec_2_pix.ipynb and test_pix_2_ra_dec.ipynb provide usage examples.
+The Python notebooks raDec2Pix_example.ipynb, test_ra_dec_2_pix.ipynb, test_pix_2_ra_dec.ipynb and test_fov.ipynb provide usage examples.
 
 ra_dec_2_pix is fast when called with arrays of (ra, dec) pairs for a single mjd, processing 12.5 million positions in 4.5 minutes.  pix_2_ra_dec is slower at a single mjd, processing one million positions in 9 minutes.
 
