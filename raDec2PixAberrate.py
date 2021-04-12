@@ -11,7 +11,9 @@ class aberrateRaDec:
         
     def get_state(self, julianTime):
         # utc is an array of julian dates
-        spice.furnsh(self.dataDir + "/raDec2PixKernels.txt")
+        spice.furnsh(self.dataDir + "/naif0012.tls")
+        spice.furnsh(self.dataDir + "/spk_2018127000000_2018128182705_kplr.bsp")
+        spice.furnsh(self.dataDir + "/de421.bsp")
 
         if np.isscalar(julianTime):
             julianTime = ru.make_col(np.array([julianTime]))
