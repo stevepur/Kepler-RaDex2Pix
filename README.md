@@ -9,6 +9,8 @@ The Python notebooks raDec2Pix_example.ipynb, test_ra_dec_2_pix.ipynb, test_pix_
 
 ra_dec_2_pix is fast when called with arrays of (ra, dec) pairs for a single mjd, processing 12.5 million positions in 4.5 minutes.  pix_2_ra_dec is slower at a single mjd, processing one million positions in 9 minutes.
 
+Some interesting applications of raDec2Pix are found at https://github.com/stevepur/Kepler-PixelModeling.
+
 ## This class contains the following functions:
 
 ### Initializer:
