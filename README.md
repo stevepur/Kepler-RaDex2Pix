@@ -13,7 +13,7 @@ ra_dec_2_pix is fast when called with arrays of (ra, dec) pairs for a single mjd
 
 ### Initializer:
 
-.raDec2PixClass(dataDir): dataDir is the relative path to the raDec2PixDir directory, containing the data files required by raDec2Pix.
+.raDec2PixClass(dataDir): dataDir is the path to the raDec2PixDir directory, containing the data files required by raDec2Pix.
 
 ### Function that maps RA and DEC to pixel position at a given time:
 
