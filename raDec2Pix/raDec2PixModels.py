@@ -1,11 +1,11 @@
 
-import spiceypy as spice
-from astropy.time import Time
 import numpy as np
 import types
+import os
 import array
-import raDec2PixUtils as ru
+from raDec2Pix import raDec2PixUtils as ru
 
+_dataPath = os.path.join(os.path.dirname(__file__), "data")
 
 class pointingSegment:
     def __init__(self):
@@ -18,12 +18,12 @@ class pointingSegment:
     
 class pointingModel:
 
-    def __init__(self, dataPath):
-        self.pointingMjds = ru.make_col(np.loadtxt(dataPath + "/pointingMjds.txt"))
-        self.pointingRas = ru.make_col(np.loadtxt(dataPath + "/pointingRas.txt"))
-        self.pointingDecs = ru.make_col(np.loadtxt(dataPath + "/pointingDeclinations.txt"))
-        self.pointingRolls = ru.make_col(np.loadtxt(dataPath + "/pointingRolls.txt"))
-        self.pointingSegmentStartMjds = ru.make_col(np.loadtxt(dataPath + "/pointingSegmentStartMjds.txt"))
+    def __init__(self):
+        self.pointingMjds = ru.make_col(np.loadtxt(_dataPath + "/pointingMjds.txt"))
+        self.pointingRas = ru.make_col(np.loadtxt(_dataPath + "/pointingRas.txt"))
+        self.pointingDecs = ru.make_col(np.loadtxt(_dataPath + "/pointingDeclinations.txt"))
+        self.pointingRolls = ru.make_col(np.loadtxt(_dataPath + "/pointingRolls.txt"))
+        self.pointingSegmentStartMjds = ru.make_col(np.loadtxt(_dataPath + "/pointingSegmentStartMjds.txt"))
 
     
     def get(self, fields):
@@ -162,13 +162,13 @@ class pointingModel:
 
 class rollTimeModel:
 
-    def __init__(self, dataPath):
-        self.rollTimeMjds = ru.make_col(np.loadtxt(dataPath + "/rollTimeMjds.txt"))
-        self.rollTimeSeasons = ru.make_col(np.loadtxt(dataPath + "/rollTimeSeasons.txt"))
-        self.rollTimeRollOffsets = ru.make_col(np.loadtxt(dataPath + "/rollTimeRollOffsets.txt"))
-        self.rollTimeRas = ru.make_col(np.loadtxt(dataPath + "/rollTimeFovCenterRas.txt"))
-        self.rollTimeDecs = ru.make_col(np.loadtxt(dataPath + "/rollTimeFovCenterDecs.txt"))
-        self.rollTimeRolls = ru.make_col(np.loadtxt(dataPath + "/rollTimeFovCenterRolls.txt"))
+    def __init__(self):
+        self.rollTimeMjds = ru.make_col(np.loadtxt(_dataPath + "/rollTimeMjds.txt"))
+        self.rollTimeSeasons = ru.make_col(np.loadtxt(_dataPath + "/rollTimeSeasons.txt"))
+        self.rollTimeRollOffsets = ru.make_col(np.loadtxt(_dataPath + "/rollTimeRollOffsets.txt"))
+        self.rollTimeRas = ru.make_col(np.loadtxt(_dataPath + "/rollTimeFovCenterRas.txt"))
+        self.rollTimeDecs = ru.make_col(np.loadtxt(_dataPath + "/rollTimeFovCenterDecs.txt"))
+        self.rollTimeRolls = ru.make_col(np.loadtxt(_dataPath + "/rollTimeFovCenterRolls.txt"))
 
     def get_mjd_index(self, mjds):
 
@@ -217,9 +217,9 @@ class geometryModel:
     geometryConstants = -1;
     geometryUncertainties = -1;
     
-    def __init__(self, dataPath):
-        self.geometryConstants = ru.make_col(np.loadtxt(dataPath + "/geometryConstants.txt"))
-        self.geometryUncertainties = ru.make_col(np.loadtxt(dataPath + "/geometryUncertainty.txt"))
+    def __init__(self):
+        self.geometryConstants = ru.make_col(np.loadtxt(_dataPath + "/geometryConstants.txt"))
+        self.geometryUncertainties = ru.make_col(np.loadtxt(_dataPath + "/geometryUncertainty.txt"))
 
     def get(self, fields):
         

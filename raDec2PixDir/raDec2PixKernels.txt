@@ -1,8 +1,0 @@
-\begindata
-KERNELS_TO_LOAD=(
-'raDec2PixDir/naif0012.tls',
-'raDec2PixDir/spk_2018127000000_2018128182705_kplr.bsp',
-'raDec2PixDir/de421.bsp')
-\begintext
-#
-

@@ -3,17 +3,17 @@ import spiceypy as spice
 from astropy.time import Time
 import numpy as np
 import array
-import raDec2PixUtils as ru
+from raDec2Pix import raDec2PixUtils as ru
+import os
 
-class aberrateRaDec:
-    def __init__(self, dataDir):
-        self.dataDir = dataDir;
-        
+_dataPath = os.path.join(os.path.dirname(__file__), "data")
+
+class aberrateRaDec:        
     def get_state(self, julianTime):
         # utc is an array of julian dates
-        spice.furnsh(self.dataDir + "/naif0012.tls")
-        spice.furnsh(self.dataDir + "/spk_2018127000000_2018128182705_kplr.bsp")
-        spice.furnsh(self.dataDir + "/de421.bsp")
+        spice.furnsh(_dataPath + "/naif0012.tls")
+        spice.furnsh(_dataPath + "/spk_2018127000000_2018128182705_kplr.bsp")
+        spice.furnsh(_dataPath + "/de421.bsp")
 
         if np.isscalar(julianTime):
             julianTime = ru.make_col(np.array([julianTime]))
@@ -39,6 +39,13 @@ class aberrateRaDec:
             return 1000.*state[:,3:6].reshape((len(julianTime),3))
         else:
             return 1000.*state[0,3:6]
+            
+    def get_position_vector_m(self, julianTime):
+        state = self.get_state(julianTime)
+        if hasattr(julianTime, "__len__"):
+            return 1000.*state[:,0:3].reshape((len(julianTime),3))
+        else:
+            return 1000.*state[0,0:3]
             
     def convert_stars_sph2cart(self, ra, dec):
         d2r = np.pi/180;

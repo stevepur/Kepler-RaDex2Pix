@@ -1,3 +1,6 @@
 __pycache__
 .ipynb_checkpoints
 *.pyc
+build
+Kepler_RaDex2Pix.egg-info
+.DS_Store

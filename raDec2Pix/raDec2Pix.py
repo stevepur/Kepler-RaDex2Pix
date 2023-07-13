@@ -1,17 +1,16 @@
 
 import numpy as np
-import raDec2PixUtils as ru
-import raDec2PixModels as rm
-import raDec2PixAberrate
+from raDec2Pix import raDec2PixUtils as ru
+from raDec2Pix import raDec2PixModels as rm
+from raDec2Pix import raDec2PixAberrate
 
 class raDec2PixClass:
-    def __init__(self, dataPath):
-        self.dataPath = dataPath
+    def __init__(self):
         
-        self.aberrate = raDec2PixAberrate.aberrateRaDec(self.dataPath)
-        self.geomModel = rm.geometryModel(self.dataPath)
-        self.rollTimeModel = rm.rollTimeModel(self.dataPath)
-        self.pointingModel = rm.pointingModel(self.dataPath)
+        self.aberrate = raDec2PixAberrate.aberrateRaDec()
+        self.geomModel = rm.geometryModel()
+        self.rollTimeModel = rm.rollTimeModel()
+        self.pointingModel = rm.pointingModel()
     
     def get_direction_matrix(self, julianTime, seasonInt, drot1, rot2, rot3):
         drot1 = np.array(drot1);
