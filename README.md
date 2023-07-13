@@ -1,3 +1,6 @@
+# To Install
+Clone the repository, enter the top level directory, and type "pip install .".
+
 # Kepler-RaDex2Pix
  Port of Kepler raDec2Pix code from Matlab to Python
 
