@@ -18,7 +18,7 @@ Some interesting applications of raDec2Pix are found at https://github.com/steve
 
 ### Initializer:
 
-.raDec2PixClass(dataDir): dataDir is the path to the raDec2PixDir directory, containing the data files required by raDec2Pix.
+.raDec2PixClass()
 
 ### Function that maps RA and DEC to pixel position at a given time:
 
